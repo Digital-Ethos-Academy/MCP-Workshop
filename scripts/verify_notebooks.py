@@ -161,7 +161,13 @@ def verify_markdown_cells(notebook_path):
 
 def verify_notebook(notebook_path):
     """Run all verifications on a notebook."""
-    print(f"\n{notebook_path.relative_to(Path.cwd())}")
+    # Get relative path for display
+    try:
+        rel_path = notebook_path.relative_to(Path.cwd())
+    except ValueError:
+        rel_path = notebook_path.name
+    
+    print(f"\n{rel_path}")
     
     checks = [
         ("json", verify_json_structure),

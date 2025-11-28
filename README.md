@@ -92,7 +92,7 @@ MCP-Workshop/
 ### 2. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/your-org/MCP-Workshop.git
 cd MCP-Workshop
 ```
 
@@ -164,6 +164,22 @@ Build a complete MCP server that serves as a document assistant with search tool
 
 ---
 
+## API Cost Estimates
+
+This workshop uses AI APIs. Estimated costs per lab:
+
+| Lab | API Calls | Estimated Cost |
+|-----|-----------|----------------|
+| Lab 1 | 5-10 tool calls | $0.01 - $0.05 |
+| Lab 2 | Minimal (local testing) | $0.00 - $0.02 |
+| Lab 3 | 10-15 tool calls | $0.02 - $0.10 |
+| Lab 4 | 20-30 tool calls | $0.10 - $0.30 |
+| **Total Workshop** | ~50-60 calls | **$0.15 - $0.50** |
+
+> **Note:** Costs may vary based on model choice and input/output lengths.
+
+---
+
 ## Troubleshooting
 
 ### Common Issues
@@ -183,4 +199,4 @@ See `Supporting_Materials/Environment_Setup_Guide.md` for detailed troubleshooti
 
 ## License
 
-These materials are licensed for workshop use. Contact your program coordinator for redistribution rights.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
