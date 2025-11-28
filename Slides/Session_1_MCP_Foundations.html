@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session 1: MCP Foundations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c;
+            color: #e2e8f0;
+        }
+        .section-title {
+            position: relative;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background-color: #63b3ed;
+            border-radius: 9999px;
+        }
+        .card {
+            background-color: #2d3748;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .collapsible-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            font-weight: 600;
+            color: #90cdf4;
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .collapsible-content.open {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+        .code-block {
+            background-color: #232d3a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.9em;
+            color: #a0aec0;
+        }
+        .highlight {
+            color: #4fd1c5;
+        }
+        .accent-text {
+            color: #63b3ed;
+        }
+        .spark-creativity {
+            background-color: #3a4a5c;
+            border-left: 4px solid #f6ad55;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+            color: #cbd5e0;
+        }
+        .syntax-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .syntax-list li {
+            position: relative;
+            padding-left: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        .syntax-list li::before {
+            content: '›';
+            position: absolute;
+            left: 0;
+            color: #4fd1c5;
+            font-weight: bold;
+        }
+        .diagram-box {
+            background-color: #232d3a;
+            border: 1px solid #4a5568;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85em;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        .primitive-card {
+            background-color: #2d3748;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border-top: 3px solid #63b3ed;
+        }
+        .primitive-card.tools {
+            border-top-color: #4fd1c5;
+        }
+        .primitive-card.resources {
+            border-top-color: #9f7aea;
+        }
+        .primitive-card.prompts {
+            border-top-color: #f6ad55;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <header class="bg-gray-800 p-4 sticky top-0 z-50 shadow-xl">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-white"><span class="accent-text">MCP</span> Workshop</h1>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="#intro" class="text-gray-300 hover:text-white transition duration-300">Intro</a></li>
+                    <li><a href="#architecture" class="text-gray-300 hover:text-white transition duration-300">Architecture</a></li>
+                    <li><a href="#primitives" class="text-gray-300 hover:text-white transition duration-300">Primitives</a></li>
+                    <li><a href="#lab1" class="text-gray-300 hover:text-white transition duration-300">Lab 1</a></li>
+                    <li><a href="#security" class="text-gray-300 hover:text-white transition duration-300">Security</a></li>
+                    <li><a href="#lab2" class="text-gray-300 hover:text-white transition duration-300">Lab 2</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-6">
+        <!-- Title Section -->
+        <section id="session1-intro" class="text-center my-10">
+            <h2 class="text-5xl font-extrabold text-white mb-4">Session 1: MCP Foundations</h2>
+            <p class="text-xl text-gray-400">
+                <span class="accent-text">Theme:</span> Understanding and using the Model Context Protocol
+            </p>
+            <p class="text-lg text-gray-400 mt-2">
+                <span class="accent-text">Core Question:</span> How do we safely extend AI assistants with external capabilities using a standardized protocol?
+            </p>
+            <p class="text-md text-gray-500 mt-4">Duration: 3 hours | Format: 80% hands-on, 20% lecture</p>
+        </section>
+
+        <!-- Agenda Overview -->
+        <section id="intro" class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">Session Agenda</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-gray-600">
+                            <th class="py-3 px-4 text-accent-text">Time</th>
+                            <th class="py-3 px-4 text-accent-text">Activity</th>
+                            <th class="py-3 px-4 text-accent-text">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-300">
+                        <tr class="border-b border-gray-700">
+                            <td class="py-3 px-4">0:00-0:30</td>
+                            <td class="py-3 px-4 font-semibold">Introduction to MCP</td>
+                            <td class="py-3 px-4">Architecture, concepts, comparison to REST APIs</td>
+                        </tr>
+                        <tr class="border-b border-gray-700 bg-gray-800">
+                            <td class="py-3 px-4">0:30-1:15</td>
+                            <td class="py-3 px-4 font-semibold highlight">Lab 1: Using Public MCP Servers</td>
+                            <td class="py-3 px-4">Configure VS Code + GitHub Copilot with MCP servers</td>
+                        </tr>
+                        <tr class="border-b border-gray-700">
+                            <td class="py-3 px-4">1:15-1:30</td>
+                            <td class="py-3 px-4">Break</td>
+                            <td class="py-3 px-4">-</td>
+                        </tr>
+                        <tr class="border-b border-gray-700">
+                            <td class="py-3 px-4">1:30-2:00</td>
+                            <td class="py-3 px-4 font-semibold">MCP Security & Best Practices</td>
+                            <td class="py-3 px-4">Evaluating servers, risks, trust boundaries</td>
+                        </tr>
+                        <tr class="border-b border-gray-700 bg-gray-800">
+                            <td class="py-3 px-4">2:00-2:45</td>
+                            <td class="py-3 px-4 font-semibold highlight">Lab 2: Your First MCP Server</td>
+                            <td class="py-3 px-4">Build a server with FastMCP decorators</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4">2:45-3:00</td>
+                            <td class="py-3 px-4 font-semibold">Wrap-up & Q&A</td>
+                            <td class="py-3 px-4">Review, preview Session 2</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- What is MCP -->
+        <section id="architecture" class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">What is MCP?</h3>
+            <p class="text-gray-300 mb-6">
+                The <span class="accent-text">Model Context Protocol (MCP)</span> is an open standard that enables AI applications to connect with external data sources and tools through a unified interface.
+            </p>
+
+            <div class="bg-gray-800 p-6 rounded-lg mb-6 text-center">
+                <p class="text-3xl font-bold text-accent-text mb-2">🔌 "USB-C for AI"</p>
+                <p class="text-gray-400">A standardized way to plug different capabilities into any AI application</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h4 class="text-xl font-semibold text-red-400 mb-3">Before MCP</h4>
+                    <ul class="syntax-list text-gray-300">
+                        <li>Custom integrations for each AI app</li>
+                        <li>Different APIs, different formats</li>
+                        <li>Rebuild tools for each platform</li>
+                        <li>No standard security model</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg border border-teal-500">
+                    <h4 class="text-xl font-semibold highlight mb-3">With MCP</h4>
+                    <ul class="syntax-list text-gray-300">
+                        <li>Build once, use everywhere</li>
+                        <li>Standard protocol for all AI apps</li>
+                        <li>Consistent security model</li>
+                        <li>Growing ecosystem of servers</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="spark-creativity">
+                <h4 class="font-semibold text-white mb-2">Payments Industry Example</h4>
+                <p>Imagine building a <span class="highlight">Transaction Search MCP Server</span> once, then using it with:</p>
+                <ul class="syntax-list mt-2">
+                    <li>VS Code + GitHub Copilot for developer queries</li>
+                    <li>Claude Desktop for analyst investigations</li>
+                    <li>Custom internal tools for support teams</li>
+                </ul>
+                <p class="mt-2">One server, multiple AI applications, consistent interface!</p>
+            </div>
+        </section>
+
+        <!-- MCP Architecture -->
+        <section class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">MCP Architecture</h3>
+
+            <div class="diagram-box text-center mb-6">
+┌─────────────────────────────────────────────────────────┐
+│                        HOST                             │
+│  (VS Code, Claude Desktop, Custom App)                  │
+│                                                         │
+│   ┌─────────────┐    ┌─────────────┐                   │
+│   │   CLIENT    │    │   CLIENT    │                   │
+│   └──────┬──────┘    └──────┬──────┘                   │
+└──────────┼──────────────────┼───────────────────────────┘
+           │                  │
+           │ MCP Protocol     │ MCP Protocol
+           │ (stdio/SSE/HTTP) │ (stdio/SSE/HTTP)
+           │                  │
+    ┌──────┴──────┐    ┌──────┴──────┐
+    │   SERVER    │    │   SERVER    │
+    │ (filesystem)│    │ (payments)  │
+    └─────────────┘    └─────────────┘
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="text-xl font-semibold text-accent-text mb-3">Key Components</h4>
+                    <ul class="syntax-list text-gray-300">
+                        <li><strong>Host:</strong> The AI application (VS Code, Claude Desktop)</li>
+                        <li><strong>Client:</strong> Connects to MCP servers (managed by host)</li>
+                        <li><strong>Server:</strong> Exposes tools, resources, and prompts</li>
+                        <li><strong>Transport:</strong> Communication layer (stdio, SSE, HTTP)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold text-accent-text mb-3">How It Works</h4>
+                    <ol class="text-gray-300 space-y-2">
+                        <li><span class="highlight">1.</span> Host starts and connects to configured servers</li>
+                        <li><span class="highlight">2.</span> Servers announce their capabilities</li>
+                        <li><span class="highlight">3.</span> User asks AI to do something</li>
+                        <li><span class="highlight">4.</span> AI calls appropriate server tools</li>
+                        <li><span class="highlight">5.</span> Results flow back to the user</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- MCP vs REST APIs -->
+        <section class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">MCP vs REST APIs</h3>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-gray-600">
+                            <th class="py-3 px-4 text-accent-text">Aspect</th>
+                            <th class="py-3 px-4 text-blue-400">REST API</th>
+                            <th class="py-3 px-4 text-teal-400">MCP</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-300">
+                        <tr class="border-b border-gray-700">
+                            <td class="py-3 px-4 font-semibold">Primary User</td>
+                            <td class="py-3 px-4">Developers writing code</td>
+                            <td class="py-3 px-4">AI applications</td>
+                        </tr>
+                        <tr class="border-b border-gray-700">
+                            <td class="py-3 px-4 font-semibold">Discovery</td>
+                            <td class="py-3 px-4">Read documentation</td>
+                            <td class="py-3 px-4">Auto-discovered by AI</td>
+                        </tr>
+                        <tr class="border-b border-gray-700">
+                            <td class="py-3 px-4 font-semibold">Descriptions</td>
+                            <td class="py-3 px-4">For humans (docs)</td>
+                            <td class="py-3 px-4">For AI (docstrings, schemas)</td>
+                        </tr>
+                        <tr class="border-b border-gray-700">
+                            <td class="py-3 px-4 font-semibold">State</td>
+                            <td class="py-3 px-4">Stateless</td>
+                            <td class="py-3 px-4">Can maintain session state</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-semibold">Communication</td>
+                            <td class="py-3 px-4">Request/Response</td>
+                            <td class="py-3 px-4">Bidirectional, streaming</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-6 p-4 bg-gray-800 rounded-lg">
+                <p class="text-gray-300"><span class="accent-text">Key Insight:</span> MCP is designed for AI-to-service communication, while REST APIs are designed for developer-to-service communication. MCP servers have rich descriptions that help AI understand when and how to use each tool.</p>
+            </div>
+        </section>
+
+        <!-- MCP Primitives -->
+        <section id="primitives" class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">MCP Primitives</h3>
+            <p class="text-gray-300 mb-6">
+                MCP defines three types of capabilities that servers can expose:
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="primitive-card tools">
+                    <div class="text-3xl mb-2">🔧</div>
+                    <h4 class="text-xl font-semibold highlight mb-2">Tools</h4>
+                    <p class="text-gray-400 mb-3">Functions the AI can call to perform actions</p>
+                    <div class="code-block text-sm">
+<span class="text-blue-400">@mcp.tool()</span>
+<span class="text-purple-400">def</span> <span class="text-yellow-400">search_transactions</span>(
+    query: <span class="text-green-400">str</span>
+) -> <span class="text-green-400">list</span>:
+    <span class="text-gray-500">"""Search transactions."""</span>
+    <span class="text-purple-400">return</span> db.search(query)
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">Like POST/PUT endpoints - they do things</p>
+                </div>
+
+                <div class="primitive-card resources">
+                    <div class="text-3xl mb-2">📄</div>
+                    <h4 class="text-xl font-semibold text-purple-400 mb-2">Resources</h4>
+                    <p class="text-gray-400 mb-3">Read-only data the AI can access</p>
+                    <div class="code-block text-sm">
+<span class="text-blue-400">@mcp.resource</span>(
+    <span class="text-green-400">"txn://{txn_id}"</span>
+)
+<span class="text-purple-400">def</span> <span class="text-yellow-400">get_transaction</span>(
+    txn_id: <span class="text-green-400">str</span>
+) -> <span class="text-green-400">str</span>:
+    <span class="text-gray-500">"""Get transaction."""</span>
+    <span class="text-purple-400">return</span> db.get(txn_id)
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">Like GET endpoints - they read data</p>
+                </div>
+
+                <div class="primitive-card prompts">
+                    <div class="text-3xl mb-2">📝</div>
+                    <h4 class="text-xl font-semibold text-orange-400 mb-2">Prompts</h4>
+                    <p class="text-gray-400 mb-3">Reusable prompt templates with parameters</p>
+                    <div class="code-block text-sm">
+<span class="text-blue-400">@mcp.prompt()</span>
+<span class="text-purple-400">def</span> <span class="text-yellow-400">analyze_fraud</span>(
+    txn_id: <span class="text-green-400">str</span>
+) -> <span class="text-green-400">str</span>:
+    <span class="text-gray-500">"""Fraud analysis."""</span>
+    <span class="text-purple-400">return</span> f<span class="text-green-400">"Analyze {txn_id}..."</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">Pre-built prompts for common tasks</p>
+                </div>
+            </div>
+
+            <div class="spark-creativity mt-6">
+                <h4 class="font-semibold text-white mb-2">Payments MCP Server Example</h4>
+                <div class="grid md:grid-cols-3 gap-4 mt-3">
+                    <div class="bg-gray-800 p-3 rounded">
+                        <p class="font-semibold highlight">Tools</p>
+                        <ul class="text-sm text-gray-400 mt-1">
+                            <li>• search_transactions()</li>
+                            <li>• flag_for_review()</li>
+                            <li>• generate_report()</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 p-3 rounded">
+                        <p class="font-semibold text-purple-400">Resources</p>
+                        <ul class="text-sm text-gray-400 mt-1">
+                            <li>• txn://{id}</li>
+                            <li>• merchant://{id}</li>
+                            <li>• compliance://rules</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 p-3 rounded">
+                        <p class="font-semibold text-orange-400">Prompts</p>
+                        <ul class="text-sm text-gray-400 mt-1">
+                            <li>• fraud_analysis</li>
+                            <li>• compliance_check</li>
+                            <li>• dispute_summary</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lab 1 Transition -->
+        <section id="lab1" class="my-12 card bg-gradient-to-r from-blue-900 to-blue-800">
+            <h3 class="text-3xl font-bold text-white mb-4">Lab 1: Using Public MCP Servers</h3>
+            <p class="text-xl text-blue-200 mb-4">Time: 45 minutes</p>
+
+            <div class="bg-black bg-opacity-30 p-5 rounded-lg mb-4">
+                <h4 class="font-semibold text-white mb-3">What You'll Do</h4>
+                <ul class="syntax-list text-gray-300">
+                    <li>Explore the MCP server ecosystem</li>
+                    <li>Configure VS Code settings for MCP</li>
+                    <li>Install and test the filesystem MCP server</li>
+                    <li>Install and test a web search MCP server</li>
+                    <li>Evaluate server quality and security</li>
+                </ul>
+            </div>
+
+            <div class="bg-black bg-opacity-30 p-5 rounded-lg">
+                <h4 class="font-semibold text-white mb-3">Key Learnings</h4>
+                <ul class="syntax-list text-gray-300">
+                    <li>MCP server configuration in <code class="bg-gray-700 px-1 rounded">settings.json</code></li>
+                    <li>Server capabilities and permissions</li>
+                    <li>Testing servers before production use</li>
+                    <li>Understanding trust boundaries</li>
+                </ul>
+            </div>
+
+            <div class="mt-6 text-center">
+                <p class="text-xl text-white">Open: <code class="bg-gray-700 px-2 py-1 rounded">Labs/Session_1/Lab_1_Using_Public_MCP_Servers.ipynb</code></p>
+            </div>
+        </section>
+
+        <!-- Break -->
+        <section class="my-12 text-center py-8">
+            <h3 class="text-2xl font-bold text-gray-400">☕ Break (15 minutes)</h3>
+        </section>
+
+        <!-- Security & Best Practices -->
+        <section id="security" class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">MCP Security & Best Practices</h3>
+            <p class="text-gray-300 mb-6">
+                MCP servers have significant access to your systems. <span class="accent-text">Evaluate before you install!</span>
+            </p>
+
+            <h4 class="text-xl font-semibold text-accent-text mb-4">Security Evaluation Checklist</h4>
+
+            <div class="overflow-x-auto mb-6">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-gray-600">
+                            <th class="py-3 px-4 text-accent-text">Criteria</th>
+                            <th class="py-3 px-4 text-accent-text">What to Check</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-300">
+                        <tr class="border-b border-gray-700">
+                            <td class="py-3 px-4 font-semibold">Source Code</td>
+                            <td class="py-3 px-4">Is it open source? Can you audit it?</td>
+                        </tr>
+                        <tr class="border-b border-gray-700">
+                            <td class="py-3 px-4 font-semibold">Author</td>
+                            <td class="py-3 px-4">Reputable organization? Active maintainer?</td>
+                        </tr>
+                        <tr class="border-b border-gray-700">
+                            <td class="py-3 px-4 font-semibold">Permissions</td>
+                            <td class="py-3 px-4">What does it access? Files? Network? Credentials?</td>
+                        </tr>
+                        <tr class="border-b border-gray-700">
+                            <td class="py-3 px-4 font-semibold">Activity</td>
+                            <td class="py-3 px-4">Recently updated? Active community?</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-semibold">Reviews</td>
+                            <td class="py-3 px-4">What do others say about it?</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-gray-800 p-5 rounded-lg">
+                    <h4 class="text-xl font-semibold text-accent-text mb-3">Trust Boundaries</h4>
+                    <p class="text-gray-300 mb-3">Understand what each server can access:</p>
+                    <ul class="syntax-list text-gray-300">
+                        <li><strong>Filesystem servers:</strong> Read/write files in specified directories</li>
+                        <li><strong>API servers:</strong> Make network requests on your behalf</li>
+                        <li><strong>Database servers:</strong> Execute queries against your data</li>
+                    </ul>
+                </div>
+                <div class="bg-red-900 bg-opacity-30 p-5 rounded-lg border border-red-600">
+                    <h4 class="text-xl font-semibold text-red-400 mb-3">Red Flags</h4>
+                    <ul class="syntax-list text-gray-300">
+                        <li>No source code available</li>
+                        <li>Requests excessive permissions</li>
+                        <li>No documentation or unclear purpose</li>
+                        <li>Abandoned or unmaintained project</li>
+                        <li>Negative community feedback</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="spark-creativity">
+                <h4 class="font-semibold text-white mb-2">PCI-DSS Considerations for Payments</h4>
+                <p class="mb-3">When building MCP servers for payments systems, consider:</p>
+                <ul class="syntax-list">
+                    <li><strong>Data Access:</strong> Never expose full card numbers - use tokens</li>
+                    <li><strong>Logging:</strong> Log tool calls for audit trails</li>
+                    <li><strong>Authentication:</strong> Ensure proper auth before exposing data</li>
+                    <li><strong>Encryption:</strong> Use TLS for any network transport</li>
+                    <li><strong>Scope:</strong> Limit servers to specific, necessary functions</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- FastMCP Overview -->
+        <section class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">Building MCP Servers with FastMCP</h3>
+            <p class="text-gray-300 mb-6">
+                <span class="accent-text">FastMCP</span> is the Python SDK that makes building MCP servers simple using decorators.
+            </p>
+
+            <div class="code-block mb-6">
+<span class="text-purple-400">from</span> mcp.server.fastmcp <span class="text-purple-400">import</span> FastMCP
+
+<span class="text-gray-500"># Create server</span>
+mcp = FastMCP(<span class="text-green-400">"my-server"</span>)
+
+<span class="text-gray-500"># Add a tool</span>
+<span class="text-blue-400">@mcp.tool()</span>
+<span class="text-purple-400">def</span> <span class="text-yellow-400">get_transaction</span>(transaction_id: <span class="text-green-400">str</span>) -> <span class="text-green-400">dict</span>:
+    <span class="text-gray-500">"""Retrieve transaction details by ID.
+
+    Args:
+        transaction_id: The unique transaction identifier (e.g., TX-12345)
+
+    Returns:
+        Transaction details including amount, merchant, and status
+    """</span>
+    <span class="text-gray-500"># Your implementation here</span>
+    <span class="text-purple-400">return</span> {<span class="text-green-400">"id"</span>: transaction_id, <span class="text-green-400">"amount"</span>: <span class="text-orange-400">100.00</span>, <span class="text-green-400">"status"</span>: <span class="text-green-400">"completed"</span>}
+
+<span class="text-gray-500"># Run the server</span>
+<span class="text-purple-400">if</span> __name__ == <span class="text-green-400">"__main__"</span>:
+    mcp.run()
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-gray-800 p-4 rounded-lg text-center">
+                    <div class="text-2xl mb-2">📝</div>
+                    <p class="font-semibold text-accent-text">Docstrings Matter!</p>
+                    <p class="text-sm text-gray-400">AI uses docstrings to understand tools</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg text-center">
+                    <div class="text-2xl mb-2">🏷️</div>
+                    <p class="font-semibold text-accent-text">Type Hints Required</p>
+                    <p class="text-sm text-gray-400">Parameters need types for validation</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg text-center">
+                    <div class="text-2xl mb-2">🧪</div>
+                    <p class="font-semibold text-accent-text">Test with Inspector</p>
+                    <p class="text-sm text-gray-400">Use <code class="bg-gray-700 px-1 rounded">mcp dev</code> to test</p>
+                </div>
+            </div>
+
+            <div class="collapsible-header mt-6" onclick="toggleCollapsible(this)">
+                <span>View Full Server Example with Multiple Tools</span>
+                <span class="transform transition-transform">+</span>
+            </div>
+            <div class="collapsible-content">
+                <div class="code-block mt-4">
+<span class="text-purple-400">from</span> mcp.server.fastmcp <span class="text-purple-400">import</span> FastMCP
+<span class="text-purple-400">from</span> datetime <span class="text-purple-400">import</span> datetime
+
+mcp = FastMCP(<span class="text-green-400">"transaction-server"</span>)
+
+<span class="text-gray-500"># Simulated database</span>
+transactions = {
+    <span class="text-green-400">"TX-001"</span>: {<span class="text-green-400">"amount"</span>: <span class="text-orange-400">150.00</span>, <span class="text-green-400">"merchant"</span>: <span class="text-green-400">"Coffee Shop"</span>, <span class="text-green-400">"status"</span>: <span class="text-green-400">"completed"</span>},
+    <span class="text-green-400">"TX-002"</span>: {<span class="text-green-400">"amount"</span>: <span class="text-orange-400">5000.00</span>, <span class="text-green-400">"merchant"</span>: <span class="text-green-400">"Electronics"</span>, <span class="text-green-400">"status"</span>: <span class="text-green-400">"pending"</span>},
+}
+
+<span class="text-blue-400">@mcp.tool()</span>
+<span class="text-purple-400">def</span> <span class="text-yellow-400">get_transaction</span>(transaction_id: <span class="text-green-400">str</span>) -> <span class="text-green-400">dict</span>:
+    <span class="text-gray-500">"""Retrieve transaction details by ID.
+
+    Args:
+        transaction_id: Unique transaction ID (e.g., TX-001)
+
+    Returns:
+        Transaction details or error if not found
+    """</span>
+    <span class="text-purple-400">if</span> transaction_id <span class="text-purple-400">in</span> transactions:
+        <span class="text-purple-400">return</span> {<span class="text-green-400">"id"</span>: transaction_id, **transactions[transaction_id]}
+    <span class="text-purple-400">return</span> {<span class="text-green-400">"error"</span>: f<span class="text-green-400">"Transaction {transaction_id} not found"</span>}
+
+<span class="text-blue-400">@mcp.tool()</span>
+<span class="text-purple-400">def</span> <span class="text-yellow-400">search_transactions</span>(min_amount: <span class="text-green-400">float</span> = <span class="text-orange-400">0</span>, status: <span class="text-green-400">str</span> = <span class="text-orange-400">None</span>) -> <span class="text-green-400">list</span>:
+    <span class="text-gray-500">"""Search transactions by criteria.
+
+    Args:
+        min_amount: Minimum transaction amount to filter
+        status: Filter by status (completed, pending, failed)
+
+    Returns:
+        List of matching transactions
+    """</span>
+    results = []
+    <span class="text-purple-400">for</span> tid, txn <span class="text-purple-400">in</span> transactions.items():
+        <span class="text-purple-400">if</span> txn[<span class="text-green-400">"amount"</span>] >= min_amount:
+            <span class="text-purple-400">if</span> status <span class="text-purple-400">is</span> <span class="text-orange-400">None</span> <span class="text-purple-400">or</span> txn[<span class="text-green-400">"status"</span>] == status:
+                results.append({<span class="text-green-400">"id"</span>: tid, **txn})
+    <span class="text-purple-400">return</span> results
+
+<span class="text-blue-400">@mcp.tool()</span>
+<span class="text-purple-400">def</span> <span class="text-yellow-400">flag_for_review</span>(transaction_id: <span class="text-green-400">str</span>, reason: <span class="text-green-400">str</span>) -> <span class="text-green-400">str</span>:
+    <span class="text-gray-500">"""Flag a transaction for manual review.
+
+    Args:
+        transaction_id: Transaction to flag
+        reason: Reason for flagging (e.g., "suspicious pattern")
+
+    Returns:
+        Confirmation message
+    """</span>
+    <span class="text-purple-400">return</span> f<span class="text-green-400">"Transaction {transaction_id} flagged for review: {reason}"</span>
+
+<span class="text-purple-400">if</span> __name__ == <span class="text-green-400">"__main__"</span>:
+    mcp.run()
+                </div>
+            </div>
+        </section>
+
+        <!-- Lab 2 Transition -->
+        <section id="lab2" class="my-12 card bg-gradient-to-r from-teal-900 to-teal-800">
+            <h3 class="text-3xl font-bold text-white mb-4">Lab 2: Your First MCP Server</h3>
+            <p class="text-xl text-teal-200 mb-4">Time: 45 minutes</p>
+
+            <div class="bg-black bg-opacity-30 p-5 rounded-lg mb-4">
+                <h4 class="font-semibold text-white mb-3">What You'll Build</h4>
+                <p class="text-gray-300 mb-3">A <span class="highlight">Text Utility MCP Server</span> with tools for:</p>
+                <ul class="syntax-list text-gray-300">
+                    <li>Word and character counting</li>
+                    <li>Text transformation (uppercase, reverse)</li>
+                    <li>Input validation</li>
+                </ul>
+            </div>
+
+            <div class="bg-black bg-opacity-30 p-5 rounded-lg">
+                <h4 class="font-semibold text-white mb-3">Key Learnings</h4>
+                <ul class="syntax-list text-gray-300">
+                    <li>Creating servers with <code class="bg-gray-700 px-1 rounded">FastMCP</code></li>
+                    <li>Adding tools with <code class="bg-gray-700 px-1 rounded">@mcp.tool()</code> decorator</li>
+                    <li>Writing effective docstrings for AI</li>
+                    <li>Testing with <code class="bg-gray-700 px-1 rounded">mcp dev</code> and MCP Inspector</li>
+                    <li>Connecting to VS Code</li>
+                </ul>
+            </div>
+
+            <div class="mt-6 text-center">
+                <p class="text-xl text-white">Open: <code class="bg-gray-700 px-2 py-1 rounded">Labs/Session_1/Lab_2_Your_First_MCP_Server.ipynb</code></p>
+            </div>
+        </section>
+
+        <!-- Session 1 Wrap-up -->
+        <section class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">Session 1 Recap</h3>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="text-xl font-semibold text-accent-text mb-3">What You Learned</h4>
+                    <ul class="syntax-list text-gray-300">
+                        <li>MCP architecture: hosts, clients, servers, transports</li>
+                        <li>MCP primitives: tools, resources, prompts</li>
+                        <li>MCP vs REST APIs - designed for AI</li>
+                        <li>Security evaluation for public servers</li>
+                        <li>Building servers with FastMCP</li>
+                        <li>Testing with MCP Inspector</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold text-accent-text mb-3">Coming in Session 2</h4>
+                    <ul class="syntax-list text-gray-300">
+                        <li>Async tools with progress reporting</li>
+                        <li>MCP resources for data exposure</li>
+                        <li>MCP prompts for templates</li>
+                        <li>Connecting as an MCP client</li>
+                        <li>Production considerations</li>
+                        <li>Capstone: Document Assistant Server</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Q&A -->
+        <section class="my-12 text-center py-8 card bg-gradient-to-r from-purple-900 to-purple-800">
+            <h3 class="text-3xl font-bold text-white mb-4">Questions & Discussion</h3>
+            <p class="text-xl text-purple-200">What questions do you have about MCP?</p>
+            <p class="text-gray-400 mt-4">Session 2 starts after a break</p>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 p-6 mt-12">
+        <div class="container mx-auto text-center text-gray-400">
+            <p>MCP Workshop | Session 1: MCP Foundations</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleCollapsible(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('span:last-child');
+            content.classList.toggle('open');
+            icon.textContent = content.classList.contains('open') ? '−' : '+';
+        }
+    </script>
+</body>
+</html>

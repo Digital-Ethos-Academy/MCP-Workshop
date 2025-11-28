@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session 2: Advanced MCP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c;
+            color: #e2e8f0;
+        }
+        .section-title {
+            position: relative;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background-color: #63b3ed;
+            border-radius: 9999px;
+        }
+        .card {
+            background-color: #2d3748;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .collapsible-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            font-weight: 600;
+            color: #90cdf4;
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .collapsible-content.open {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+        .code-block {
+            background-color: #232d3a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.9em;
+            color: #a0aec0;
+        }
+        .highlight {
+            color: #4fd1c5;
+        }
+        .accent-text {
+            color: #63b3ed;
+        }
+        .spark-creativity {
+            background-color: #3a4a5c;
+            border-left: 4px solid #f6ad55;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+            color: #cbd5e0;
+        }
+        .syntax-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .syntax-list li {
+            position: relative;
+            padding-left: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        .syntax-list li::before {
+            content: '›';
+            position: absolute;
+            left: 0;
+            color: #4fd1c5;
+            font-weight: bold;
+        }
+        .diagram-box {
+            background-color: #232d3a;
+            border: 1px solid #4a5568;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85em;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        .transport-card {
+            background-color: #2d3748;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border-left: 3px solid #63b3ed;
+        }
+        .transport-card.stdio {
+            border-left-color: #4fd1c5;
+        }
+        .transport-card.sse {
+            border-left-color: #9f7aea;
+        }
+        .transport-card.http {
+            border-left-color: #f6ad55;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <header class="bg-gray-800 p-4 sticky top-0 z-50 shadow-xl">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-white"><span class="accent-text">MCP</span> Workshop</h1>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="#intro" class="text-gray-300 hover:text-white transition duration-300">Intro</a></li>
+                    <li><a href="#async-tools" class="text-gray-300 hover:text-white transition duration-300">Async Tools</a></li>
+                    <li><a href="#resources" class="text-gray-300 hover:text-white transition duration-300">Resources</a></li>
+                    <li><a href="#lab3" class="text-gray-300 hover:text-white transition duration-300">Lab 3</a></li>
+                    <li><a href="#production" class="text-gray-300 hover:text-white transition duration-300">Production</a></li>
+                    <li><a href="#capstone" class="text-gray-300 hover:text-white transition duration-300">Capstone</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-6">
+        <!-- Title Section -->
+        <section id="session2-intro" class="text-center my-10">
+            <h2 class="text-5xl font-extrabold text-white mb-4">Session 2: Advanced MCP</h2>
+            <p class="text-xl text-gray-400">
+                <span class="accent-text">Theme:</span> Building production-ready MCP servers and integrating them into applications
+            </p>
+            <p class="text-lg text-gray-400 mt-2">
+                <span class="accent-text">Core Question:</span> How do we build robust, scalable MCP servers for real-world use?
+            </p>
+            <p class="text-md text-gray-500 mt-4">Duration: 3 hours | Format: 80% hands-on, 20% lecture</p>
+        </section>
+
+        <!-- Agenda Overview -->
+        <section id="intro" class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">Session Agenda</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-gray-600">
+                            <th class="py-3 px-4 text-accent-text">Time</th>
+                            <th class="py-3 px-4 text-accent-text">Activity</th>
+                            <th class="py-3 px-4 text-accent-text">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-300">
+                        <tr class="border-b border-gray-700">
+                            <td class="py-3 px-4">0:00-0:30</td>
+                            <td class="py-3 px-4 font-semibold">Advanced Tools & Resources</td>
+                            <td class="py-3 px-4">Async tools, resources, URI patterns</td>
+                        </tr>
+                        <tr class="border-b border-gray-700 bg-gray-800">
+                            <td class="py-3 px-4">0:30-1:15</td>
+                            <td class="py-3 px-4 font-semibold highlight">Lab 3: Advanced Tools & Resources</td>
+                            <td class="py-3 px-4">Build async tools, add resources, MCP client SDK</td>
+                        </tr>
+                        <tr class="border-b border-gray-700">
+                            <td class="py-3 px-4">1:15-1:30</td>
+                            <td class="py-3 px-4">Break</td>
+                            <td class="py-3 px-4">-</td>
+                        </tr>
+                        <tr class="border-b border-gray-700">
+                            <td class="py-3 px-4">1:30-2:00</td>
+                            <td class="py-3 px-4 font-semibold">Prompts & Production</td>
+                            <td class="py-3 px-4">MCP prompts, transport modes, deployment</td>
+                        </tr>
+                        <tr class="border-b border-gray-700 bg-gray-800">
+                            <td class="py-3 px-4">2:00-2:45</td>
+                            <td class="py-3 px-4 font-semibold highlight">Lab 4: Capstone</td>
+                            <td class="py-3 px-4">Build the Document Assistant MCP Server</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4">2:45-3:00</td>
+                            <td class="py-3 px-4 font-semibold">Demo & Wrap-up</td>
+                            <td class="py-3 px-4">Participants demo their servers</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Async Tools -->
+        <section id="async-tools" class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">Async Tools with Progress Reporting</h3>
+            <p class="text-gray-300 mb-6">
+                For long-running operations, use <span class="accent-text">async tools</span> with the <span class="highlight">Context</span> parameter to report progress back to the user.
+            </p>
+
+            <div class="code-block mb-6">
+<span class="text-purple-400">from</span> mcp.server.fastmcp <span class="text-purple-400">import</span> FastMCP, Context
+
+mcp = FastMCP(<span class="text-green-400">"analytics-server"</span>)
+
+<span class="text-blue-400">@mcp.tool()</span>
+<span class="text-purple-400">async def</span> <span class="text-yellow-400">analyze_transactions</span>(
+    start_date: <span class="text-green-400">str</span>,
+    end_date: <span class="text-green-400">str</span>,
+    ctx: Context
+) -> <span class="text-green-400">dict</span>:
+    <span class="text-gray-500">"""Analyze transaction patterns over a date range.
+
+    Args:
+        start_date: Start date (YYYY-MM-DD)
+        end_date: End date (YYYY-MM-DD)
+        ctx: Context for progress reporting
+
+    Returns:
+        Analysis results with statistics and patterns
+    """</span>
+    <span class="text-gray-500"># Report starting</span>
+    <span class="text-purple-400">await</span> ctx.report_progress(<span class="text-orange-400">0</span>, <span class="text-orange-400">100</span>, <span class="text-green-400">"Fetching transactions..."</span>)
+
+    transactions = <span class="text-purple-400">await</span> fetch_transactions(start_date, end_date)
+
+    <span class="text-gray-500"># Report progress</span>
+    <span class="text-purple-400">await</span> ctx.report_progress(<span class="text-orange-400">30</span>, <span class="text-orange-400">100</span>, <span class="text-green-400">"Analyzing patterns..."</span>)
+
+    patterns = analyze_patterns(transactions)
+
+    <span class="text-purple-400">await</span> ctx.report_progress(<span class="text-orange-400">70</span>, <span class="text-orange-400">100</span>, <span class="text-green-400">"Generating report..."</span>)
+
+    report = generate_report(patterns)
+
+    <span class="text-purple-400">await</span> ctx.report_progress(<span class="text-orange-400">100</span>, <span class="text-orange-400">100</span>, <span class="text-green-400">"Complete!"</span>)
+
+    <span class="text-purple-400">return</span> report
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h4 class="text-xl font-semibold text-accent-text mb-3">When to Use Async</h4>
+                    <ul class="syntax-list text-gray-300">
+                        <li>Database queries that may take time</li>
+                        <li>External API calls</li>
+                        <li>File processing operations</li>
+                        <li>Any I/O-bound work</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h4 class="text-xl font-semibold text-accent-text mb-3">Progress Reporting</h4>
+                    <ul class="syntax-list text-gray-300">
+                        <li><code class="bg-gray-700 px-1 rounded">ctx.report_progress(current, total, message)</code></li>
+                        <li>Keeps user informed during long operations</li>
+                        <li>Include Context as last parameter</li>
+                        <li>Use descriptive progress messages</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="spark-creativity">
+                <h4 class="font-semibold text-white mb-2">Payments Example: Transaction Analytics with Progress</h4>
+                <p class="mb-3">A tool that analyzes millions of transactions needs progress feedback:</p>
+                <div class="code-block text-sm">
+<span class="text-purple-400">await</span> ctx.report_progress(<span class="text-orange-400">0</span>, <span class="text-orange-400">100</span>, <span class="text-green-400">"Loading Q4 transactions (2.3M records)..."</span>)
+<span class="text-purple-400">await</span> ctx.report_progress(<span class="text-orange-400">25</span>, <span class="text-orange-400">100</span>, <span class="text-green-400">"Identifying velocity patterns..."</span>)
+<span class="text-purple-400">await</span> ctx.report_progress(<span class="text-orange-400">50</span>, <span class="text-orange-400">100</span>, <span class="text-green-400">"Detecting anomalies..."</span>)
+<span class="text-purple-400">await</span> ctx.report_progress(<span class="text-orange-400">75</span>, <span class="text-orange-400">100</span>, <span class="text-green-400">"Generating merchant risk scores..."</span>)
+<span class="text-purple-400">await</span> ctx.report_progress(<span class="text-orange-400">100</span>, <span class="text-orange-400">100</span>, <span class="text-green-400">"Analysis complete!"</span>)
+                </div>
+            </div>
+        </section>
+
+        <!-- MCP Resources -->
+        <section id="resources" class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">MCP Resources</h3>
+            <p class="text-gray-300 mb-6">
+                <span class="accent-text">Resources</span> expose read-only data through URI patterns. Think of them like <span class="highlight">GET endpoints</span> - they provide data without side effects.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <h4 class="text-xl font-semibold text-accent-text mb-3">Resource Definition</h4>
+                    <div class="code-block">
+<span class="text-blue-400">@mcp.resource</span>(<span class="text-green-400">"txn://{transaction_id}"</span>)
+<span class="text-purple-400">def</span> <span class="text-yellow-400">get_transaction</span>(transaction_id: <span class="text-green-400">str</span>) -> <span class="text-green-400">str</span>:
+    <span class="text-gray-500">"""Get transaction details.
+
+    Read-only access to transaction data.
+    """</span>
+    txn = db.get_transaction(transaction_id)
+    <span class="text-purple-400">return</span> json.dumps(txn, indent=<span class="text-orange-400">2</span>)
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold text-accent-text mb-3">URI Pattern Examples</h4>
+                    <div class="code-block">
+<span class="text-gray-500"># Single parameter</span>
+<span class="text-green-400">"txn://{id}"</span>           <span class="text-gray-500"># txn://TX-001</span>
+<span class="text-green-400">"merchant://{id}"</span>      <span class="text-gray-500"># merchant://M-123</span>
+
+<span class="text-gray-500"># Multiple parameters</span>
+<span class="text-green-400">"report://{year}/{month}"</span>
+                         <span class="text-gray-500"># report://2024/12</span>
+
+<span class="text-gray-500"># Static resources</span>
+<span class="text-green-400">"config://settings"</span>    <span class="text-gray-500"># No params</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-800 p-5 rounded-lg mb-6">
+                <h4 class="text-xl font-semibold text-accent-text mb-3">Tools vs Resources</h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-gray-600">
+                                <th class="py-2 px-4">Aspect</th>
+                                <th class="py-2 px-4 text-teal-400">Tools</th>
+                                <th class="py-2 px-4 text-purple-400">Resources</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-300">
+                            <tr class="border-b border-gray-700">
+                                <td class="py-2 px-4">Purpose</td>
+                                <td class="py-2 px-4">Perform actions</td>
+                                <td class="py-2 px-4">Provide data</td>
+                            </tr>
+                            <tr class="border-b border-gray-700">
+                                <td class="py-2 px-4">Side Effects</td>
+                                <td class="py-2 px-4">May have side effects</td>
+                                <td class="py-2 px-4">Read-only, no side effects</td>
+                            </tr>
+                            <tr class="border-b border-gray-700">
+                                <td class="py-2 px-4">Access Pattern</td>
+                                <td class="py-2 px-4">Called by AI when needed</td>
+                                <td class="py-2 px-4">Accessed via URI</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4">REST Analogy</td>
+                                <td class="py-2 px-4">POST, PUT, DELETE</td>
+                                <td class="py-2 px-4">GET</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="spark-creativity">
+                <h4 class="font-semibold text-white mb-2">Payments Resource Examples</h4>
+                <div class="grid md:grid-cols-3 gap-3 mt-3">
+                    <div class="bg-gray-800 p-3 rounded">
+                        <p class="font-semibold text-purple-400">Transaction Data</p>
+                        <code class="text-sm text-gray-400">txn://{id}</code>
+                    </div>
+                    <div class="bg-gray-800 p-3 rounded">
+                        <p class="font-semibold text-purple-400">Compliance Rules</p>
+                        <code class="text-sm text-gray-400">compliance://rules</code>
+                    </div>
+                    <div class="bg-gray-800 p-3 rounded">
+                        <p class="font-semibold text-purple-400">Merchant Profile</p>
+                        <code class="text-sm text-gray-400">merchant://{id}</code>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MCP Prompts -->
+        <section class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">MCP Prompts</h3>
+            <p class="text-gray-300 mb-6">
+                <span class="accent-text">Prompts</span> define reusable prompt templates with parameters. They help standardize how AI interacts with your tools and data.
+            </p>
+
+            <div class="code-block mb-6">
+<span class="text-blue-400">@mcp.prompt()</span>
+<span class="text-purple-400">def</span> <span class="text-yellow-400">fraud_analysis_prompt</span>(transaction_id: <span class="text-green-400">str</span>) -> <span class="text-green-400">str</span>:
+    <span class="text-gray-500">"""Generate a fraud analysis prompt for a transaction.
+
+    Args:
+        transaction_id: Transaction to analyze
+
+    Returns:
+        Structured prompt for fraud analysis
+    """</span>
+    <span class="text-purple-400">return</span> f<span class="text-green-400">"""Analyze transaction {transaction_id} for potential fraud indicators.
+
+Please examine:
+1. Transaction amount vs customer history
+2. Merchant category and location
+3. Time of transaction
+4. Device and IP information
+
+Provide:
+- Risk score (0-100)
+- Key risk indicators
+- Recommended action (approve/review/block)
+- Supporting evidence"""</span>
+
+<span class="text-blue-400">@mcp.prompt()</span>
+<span class="text-purple-400">def</span> <span class="text-yellow-400">compliance_check_prompt</span>(regulation: <span class="text-green-400">str</span>) -> <span class="text-green-400">str</span>:
+    <span class="text-gray-500">"""Generate a compliance check prompt."""</span>
+    <span class="text-purple-400">return</span> f<span class="text-green-400">"""Review the following for {regulation} compliance...
+
+Check for:
+- Required documentation
+- Reporting requirements
+- Time limits
+- Penalties for non-compliance"""</span>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-gray-800 p-4 rounded-lg text-center">
+                    <div class="text-2xl mb-2">📋</div>
+                    <p class="font-semibold text-orange-400">Standardization</p>
+                    <p class="text-sm text-gray-400">Consistent prompts across users</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg text-center">
+                    <div class="text-2xl mb-2">🔄</div>
+                    <p class="font-semibold text-orange-400">Reusability</p>
+                    <p class="text-sm text-gray-400">Define once, use everywhere</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg text-center">
+                    <div class="text-2xl mb-2">🎯</div>
+                    <p class="font-semibold text-orange-400">Quality</p>
+                    <p class="text-sm text-gray-400">Encode best practices</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lab 3 Transition -->
+        <section id="lab3" class="my-12 card bg-gradient-to-r from-purple-900 to-purple-800">
+            <h3 class="text-3xl font-bold text-white mb-4">Lab 3: Advanced Tools & Resources</h3>
+            <p class="text-xl text-purple-200 mb-4">Time: 45 minutes</p>
+
+            <div class="bg-black bg-opacity-30 p-5 rounded-lg mb-4">
+                <h4 class="font-semibold text-white mb-3">What You'll Build</h4>
+                <ul class="syntax-list text-gray-300">
+                    <li>Async tools with progress reporting</li>
+                    <li>Resources with URI patterns</li>
+                    <li>MCP client code to connect programmatically</li>
+                    <li>Error handling and validation</li>
+                </ul>
+            </div>
+
+            <div class="bg-black bg-opacity-30 p-5 rounded-lg">
+                <h4 class="font-semibold text-white mb-3">Key Learnings</h4>
+                <ul class="syntax-list text-gray-300">
+                    <li>Using <code class="bg-gray-700 px-1 rounded">async def</code> with <code class="bg-gray-700 px-1 rounded">Context</code></li>
+                    <li>Defining resources with <code class="bg-gray-700 px-1 rounded">@mcp.resource()</code></li>
+                    <li>URI template syntax and patterns</li>
+                    <li>MCP Client SDK for programmatic access</li>
+                </ul>
+            </div>
+
+            <div class="mt-6 text-center">
+                <p class="text-xl text-white">Open: <code class="bg-gray-700 px-2 py-1 rounded">Labs/Session_2/Lab_3_Advanced_Tools_and_Resources.ipynb</code></p>
+            </div>
+        </section>
+
+        <!-- Break -->
+        <section class="my-12 text-center py-8">
+            <h3 class="text-2xl font-bold text-gray-400">☕ Break (15 minutes)</h3>
+        </section>
+
+        <!-- Production Considerations -->
+        <section id="production" class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">Production Considerations</h3>
+
+            <h4 class="text-xl font-semibold text-accent-text mb-4">Transport Modes</h4>
+            <p class="text-gray-300 mb-4">MCP supports multiple transport mechanisms for different deployment scenarios:</p>
+
+            <div class="grid md:grid-cols-3 gap-4 mb-6">
+                <div class="transport-card stdio">
+                    <h5 class="font-semibold text-teal-400 mb-2">stdio</h5>
+                    <p class="text-sm text-gray-400 mb-2">Standard input/output</p>
+                    <ul class="syntax-list text-gray-300 text-sm">
+                        <li>Local development</li>
+                        <li>CLI tools</li>
+                        <li>VS Code integration</li>
+                    </ul>
+                    <div class="code-block mt-2 text-xs">
+mcp.run()  <span class="text-gray-500"># Default: stdio</span>
+                    </div>
+                </div>
+                <div class="transport-card sse">
+                    <h5 class="font-semibold text-purple-400 mb-2">SSE</h5>
+                    <p class="text-sm text-gray-400 mb-2">Server-Sent Events</p>
+                    <ul class="syntax-list text-gray-300 text-sm">
+                        <li>Web applications</li>
+                        <li>Real-time updates</li>
+                        <li>Browser clients</li>
+                    </ul>
+                    <div class="code-block mt-2 text-xs">
+mcp.run(transport=<span class="text-green-400">"sse"</span>)
+                    </div>
+                </div>
+                <div class="transport-card http">
+                    <h5 class="font-semibold text-orange-400 mb-2">HTTP</h5>
+                    <p class="text-sm text-gray-400 mb-2">REST-style integration</p>
+                    <ul class="syntax-list text-gray-300 text-sm">
+                        <li>Microservices</li>
+                        <li>Load balancing</li>
+                        <li>API gateways</li>
+                    </ul>
+                    <div class="code-block mt-2 text-xs">
+mcp.run(transport=<span class="text-green-400">"http"</span>)
+                    </div>
+                </div>
+            </div>
+
+            <h4 class="text-xl font-semibold text-accent-text mb-4">Error Handling</h4>
+            <div class="code-block mb-6">
+<span class="text-purple-400">from</span> mcp <span class="text-purple-400">import</span> McpError
+
+<span class="text-blue-400">@mcp.tool()</span>
+<span class="text-purple-400">def</span> <span class="text-yellow-400">process_transaction</span>(transaction_id: <span class="text-green-400">str</span>) -> <span class="text-green-400">dict</span>:
+    <span class="text-gray-500">"""Process a transaction with proper error handling."""</span>
+    <span class="text-purple-400">try</span>:
+        <span class="text-gray-500"># Validate input</span>
+        <span class="text-purple-400">if not</span> transaction_id.startswith(<span class="text-green-400">"TX-"</span>):
+            <span class="text-purple-400">raise</span> McpError(<span class="text-green-400">"Invalid transaction ID format. Expected: TX-XXXXX"</span>)
+
+        <span class="text-gray-500"># Process</span>
+        result = db.process(transaction_id)
+        <span class="text-purple-400">return</span> result
+
+    <span class="text-purple-400">except</span> DatabaseError <span class="text-purple-400">as</span> e:
+        <span class="text-purple-400">raise</span> McpError(f<span class="text-green-400">"Database error: {e}"</span>)
+    <span class="text-purple-400">except</span> Exception <span class="text-purple-400">as</span> e:
+        <span class="text-purple-400">raise</span> McpError(f<span class="text-green-400">"Processing failed: {e}"</span>)
+            </div>
+
+            <h4 class="text-xl font-semibold text-accent-text mb-4">Security Best Practices</h4>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h5 class="font-semibold text-green-400 mb-2">Do</h5>
+                    <ul class="syntax-list text-gray-300 text-sm">
+                        <li>Validate all inputs</li>
+                        <li>Use environment variables for secrets</li>
+                        <li>Log operations for auditing</li>
+                        <li>Limit file/network access</li>
+                        <li>Handle errors gracefully</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h5 class="font-semibold text-red-400 mb-2">Don't</h5>
+                    <ul class="syntax-list text-gray-300 text-sm">
+                        <li>Expose sensitive data directly</li>
+                        <li>Hardcode credentials</li>
+                        <li>Allow arbitrary file access</li>
+                        <li>Skip input validation</li>
+                        <li>Ignore error handling</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="spark-creativity mt-6">
+                <h4 class="font-semibold text-white mb-2">Reconciliation MCP Server Architecture</h4>
+                <p class="mb-3">A production MCP server for payment reconciliation might look like:</p>
+                <div class="diagram-box text-sm">
+┌─────────────────────────────────────────────────────┐
+│             Reconciliation MCP Server               │
+├─────────────────────────────────────────────────────┤
+│  Tools:                                             │
+│    • reconcile_batch(batch_id) -> async            │
+│    • find_discrepancies(date_range) -> async       │
+│    • generate_report(format) -> async              │
+├─────────────────────────────────────────────────────┤
+│  Resources:                                         │
+│    • recon://batch/{id}                            │
+│    • recon://discrepancy/{id}                      │
+│    • recon://config                                │
+├─────────────────────────────────────────────────────┤
+│  Prompts:                                           │
+│    • analyze_discrepancy(id)                       │
+│    • explain_mismatch(type)                        │
+├─────────────────────────────────────────────────────┤
+│  Transport: HTTP (for microservices integration)    │
+│  Auth: API Key + Rate Limiting                      │
+│  Logging: Structured JSON for audit                 │
+└─────────────────────────────────────────────────────┘
+                </div>
+            </div>
+        </section>
+
+        <!-- MCP Client SDK -->
+        <section class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">MCP Client SDK</h3>
+            <p class="text-gray-300 mb-6">
+                Connect to MCP servers programmatically from your own Python applications.
+            </p>
+
+            <div class="code-block">
+<span class="text-purple-400">from</span> mcp <span class="text-purple-400">import</span> ClientSession, StdioServerParameters
+<span class="text-purple-400">from</span> mcp.client.stdio <span class="text-purple-400">import</span> stdio_client
+<span class="text-purple-400">import</span> asyncio
+
+<span class="text-purple-400">async def</span> <span class="text-yellow-400">main</span>():
+    <span class="text-gray-500"># Define server parameters</span>
+    server_params = StdioServerParameters(
+        command=<span class="text-green-400">"python"</span>,
+        args=[<span class="text-green-400">"my_mcp_server.py"</span>]
+    )
+
+    <span class="text-gray-500"># Connect to the server</span>
+    <span class="text-purple-400">async with</span> stdio_client(server_params) <span class="text-purple-400">as</span> (read, write):
+        <span class="text-purple-400">async with</span> ClientSession(read, write) <span class="text-purple-400">as</span> session:
+            <span class="text-gray-500"># Initialize the connection</span>
+            <span class="text-purple-400">await</span> session.initialize()
+
+            <span class="text-gray-500"># List available tools</span>
+            tools = <span class="text-purple-400">await</span> session.list_tools()
+            <span class="text-purple-400">print</span>(f<span class="text-green-400">"Available tools: {[t.name for t in tools]}"</span>)
+
+            <span class="text-gray-500"># Call a tool</span>
+            result = <span class="text-purple-400">await</span> session.call_tool(
+                <span class="text-green-400">"search_transactions"</span>,
+                {<span class="text-green-400">"query"</span>: <span class="text-green-400">"amount > 1000"</span>}
+            )
+            <span class="text-purple-400">print</span>(f<span class="text-green-400">"Result: {result}"</span>)
+
+            <span class="text-gray-500"># Read a resource</span>
+            resource = <span class="text-purple-400">await</span> session.read_resource(<span class="text-green-400">"txn://TX-001"</span>)
+            <span class="text-purple-400">print</span>(f<span class="text-green-400">"Resource: {resource}"</span>)
+
+asyncio.run(main())
+            </div>
+        </section>
+
+        <!-- Capstone -->
+        <section id="capstone" class="my-12 card bg-gradient-to-r from-orange-900 to-orange-800">
+            <h3 class="text-3xl font-bold text-white mb-4">Lab 4: Capstone - Document Assistant</h3>
+            <p class="text-xl text-orange-200 mb-4">Time: 45 minutes</p>
+
+            <div class="bg-black bg-opacity-30 p-5 rounded-lg mb-4">
+                <h4 class="font-semibold text-white mb-3">What You'll Build</h4>
+                <p class="text-gray-300 mb-3">A complete <span class="highlight">Document Assistant MCP Server</span> with:</p>
+                <ul class="syntax-list text-gray-300">
+                    <li><strong>Tools:</strong> search_documents, get_summary, analyze</li>
+                    <li><strong>Resources:</strong> doc://{doc_id} for document access</li>
+                    <li><strong>Prompts:</strong> Analysis templates for different doc types</li>
+                    <li><strong>Features:</strong> Async operations, error handling, validation</li>
+                </ul>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div class="bg-black bg-opacity-30 p-4 rounded-lg">
+                    <h4 class="font-semibold text-white mb-2">Required Features</h4>
+                    <ul class="syntax-list text-gray-300 text-sm">
+                        <li>Document search functionality</li>
+                        <li>Document retrieval by ID</li>
+                        <li>Content analysis tools</li>
+                        <li>Resource URIs for documents</li>
+                        <li>Analysis prompts</li>
+                    </ul>
+                </div>
+                <div class="bg-black bg-opacity-30 p-4 rounded-lg">
+                    <h4 class="font-semibold text-white mb-2">Extension Challenges</h4>
+                    <ul class="syntax-list text-gray-300 text-sm">
+                        <li>Add document tagging</li>
+                        <li>Implement version history</li>
+                        <li>Add async progress reporting</li>
+                        <li>Create custom prompts</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-black bg-opacity-30 p-5 rounded-lg">
+                <h4 class="font-semibold text-white mb-3">Payments Customization Ideas</h4>
+                <ul class="syntax-list text-gray-300">
+                    <li>Convert to <strong>Compliance Document Assistant</strong></li>
+                    <li>Add resources for regulatory documents</li>
+                    <li>Create prompts for compliance analysis</li>
+                    <li>Add tools for audit trail generation</li>
+                </ul>
+            </div>
+
+            <div class="mt-6 text-center">
+                <p class="text-xl text-white">Open: <code class="bg-gray-700 px-2 py-1 rounded">Labs/Session_2/Lab_4_Capstone_Document_Assistant.ipynb</code></p>
+            </div>
+        </section>
+
+        <!-- Demo Time -->
+        <section class="my-12 card bg-gradient-to-r from-green-900 to-green-800">
+            <h3 class="text-3xl font-bold text-white mb-4">Demo Time!</h3>
+            <p class="text-xl text-green-200 mb-4">Time: 15 minutes</p>
+
+            <div class="bg-black bg-opacity-30 p-5 rounded-lg">
+                <h4 class="font-semibold text-white mb-3">Demo Guidelines</h4>
+                <ul class="syntax-list text-gray-300">
+                    <li><strong>Time:</strong> 2-3 minutes per demo</li>
+                    <li><strong>Show:</strong> Your Document Assistant in action</li>
+                    <li><strong>Explain:</strong> Tools, resources, and prompts you implemented</li>
+                    <li><strong>Share:</strong> Any extensions or customizations you added</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Workshop Wrap-up -->
+        <section class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">Workshop Recap</h3>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="text-xl font-semibold text-accent-text mb-3">Session 1 Recap</h4>
+                    <ul class="syntax-list text-gray-300">
+                        <li>MCP architecture (hosts, clients, servers)</li>
+                        <li>MCP primitives (tools, resources, prompts)</li>
+                        <li>Security evaluation for public servers</li>
+                        <li>Building servers with FastMCP</li>
+                        <li>Testing with MCP Inspector</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold text-accent-text mb-3">Session 2 Recap</h4>
+                    <ul class="syntax-list text-gray-300">
+                        <li>Async tools with progress reporting</li>
+                        <li>Resources with URI patterns</li>
+                        <li>Prompts for reusable templates</li>
+                        <li>MCP Client SDK</li>
+                        <li>Production transport modes</li>
+                        <li>Error handling best practices</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-gray-800 rounded-lg">
+                <h4 class="font-semibold text-accent-text mb-3">Next Steps</h4>
+                <ul class="syntax-list text-gray-300">
+                    <li>Explore the <a href="https://github.com/modelcontextprotocol/servers" class="text-blue-400 hover:underline">MCP Server Registry</a></li>
+                    <li>Build MCP servers for your own use cases</li>
+                    <li>Contribute to the MCP ecosystem</li>
+                    <li>Integrate MCP into your applications</li>
+                    <li>Check out the Agents Workshop for AI agent frameworks</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="my-12 card">
+            <h3 class="text-3xl font-bold section-title">Resources</h3>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h4 class="font-semibold text-accent-text mb-2">Official Documentation</h4>
+                    <ul class="syntax-list text-gray-300 text-sm">
+                        <li><a href="https://modelcontextprotocol.io/" class="text-blue-400 hover:underline">MCP Official Docs</a></li>
+                        <li><a href="https://github.com/modelcontextprotocol/python-sdk" class="text-blue-400 hover:underline">FastMCP Python SDK</a></li>
+                        <li><a href="https://github.com/modelcontextprotocol/servers" class="text-blue-400 hover:underline">MCP Server Registry</a></li>
+                    </ul>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h4 class="font-semibold text-accent-text mb-2">VS Code Integration</h4>
+                    <ul class="syntax-list text-gray-300 text-sm">
+                        <li><a href="https://code.visualstudio.com/docs/copilot/copilot-extensibility-overview" class="text-blue-400 hover:underline">VS Code MCP Guide</a></li>
+                        <li>Configure in <code class="bg-gray-700 px-1 rounded">settings.json</code></li>
+                        <li>Works with GitHub Copilot</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Thank You -->
+        <section class="my-12 text-center py-8 card bg-gradient-to-r from-blue-900 to-purple-900">
+            <h3 class="text-3xl font-bold text-white mb-4">Thank You!</h3>
+            <p class="text-xl text-blue-200">Congratulations on completing the MCP Workshop!</p>
+            <p class="text-gray-400 mt-4">Go build amazing MCP servers!</p>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 p-6 mt-12">
+        <div class="container mx-auto text-center text-gray-400">
+            <p>MCP Workshop | Session 2: Advanced MCP</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleCollapsible(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('span:last-child');
+            content.classList.toggle('open');
+            icon.textContent = content.classList.contains('open') ? '−' : '+';
+        }
+    </script>
+</body>
+</html>
