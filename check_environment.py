@@ -50,7 +50,7 @@ def check_mcp_cli():
     """Check if MCP CLI is available."""
     try:
         result = subprocess.run(
-            ["mcp", "--version"],
+            ["mcp", "version"],
             capture_output=True,
             text=True,
             timeout=10
